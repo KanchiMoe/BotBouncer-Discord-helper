@@ -48,12 +48,11 @@ def get_posts(keyword, limit=1000):
 
         # debugging
         posts_pretty_json = json.dumps(posts_raw_json, indent=2)
-        #logging.debug("Json dump:")
-        #logging.debug(posts_pretty_json)
-    
+        #print(posts_pretty_json)
+
         return posts_raw_json
 
     # error handling
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching data: {e}")
-        raise RuntimeError
+        raise e
