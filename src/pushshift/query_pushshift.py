@@ -13,6 +13,13 @@ def time_3m_ago():
     return unix_timestamp
 
 def get_posts(keyword, limit=1000):
+    # check we have the API key
+    PS_API_KEY = os.getenv('PS_API_KEY')
+    if not PS_API_KEY:
+        err_msg = "PS_API_KEY is not set or empty."
+        logging.critical(err_msg)
+        raise RuntimeError(err_msg)
+
     # get timestamp for 3m ago
     unix_timestamp = time_3m_ago()
 
@@ -31,13 +38,20 @@ def get_posts(keyword, limit=1000):
 
     # Send the request
     try:
+        logging.debug("Submitting request to pushshift...")
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         data = response.json()
 
         posts_raw_json = data.get("data", [])
+        logging.debug("Search complete, returning...")
+
+        # debugging
         posts_pretty_json = json.dumps(posts_raw_json, indent=2)
-        return posts_pretty_json
+        #logging.debug("Json dump:")
+        #logging.debug(posts_pretty_json)
+    
+        return posts_raw_json
 
     # error handling
     except requests.exceptions.RequestException as e:
