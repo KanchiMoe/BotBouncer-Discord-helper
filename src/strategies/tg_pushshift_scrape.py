@@ -3,9 +3,9 @@ import random
 import time
 
 from src import helpers
+from src import reddit
 
 from src.pushshift.query_pushshift import get_posts
-from src.reddit.shadowban_check import shadowban_check
 
 def entry(telegram_handle):
     logging.info("Searching pushshift for posts containing the TG handle: %s", telegram_handle)
@@ -29,7 +29,7 @@ def entry(telegram_handle):
     # STILL WIP
     # for each user in the list of unique users
     for user in unique_users:
-        state, _ = shadowban_check(user)
+        state, _ = reddit.shadowban_check(user)
 
         # if state is not 0 (active)
         if state != 0:
