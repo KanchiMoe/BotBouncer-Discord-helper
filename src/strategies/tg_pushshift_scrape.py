@@ -26,7 +26,8 @@ def entry(telegram_handle):
     # find unique users
     unique_users = helpers.get_unique_users_post_pushshift(ps_data)
 
-    # STILL WIP
+    not_botbouncer_banned = []
+
     # for each user in the list of unique users
     for user in unique_users:
         state, _ = reddit.shadowban_check(user)
@@ -38,6 +39,22 @@ def entry(telegram_handle):
             logging.debug(f"Sleeping for {sleep_for} seconds")
             time.sleep(sleep_for)
             continue
-            
-        print("=================================================================")
-        print(f"{user}")
+        
+        # check to see if they have already been banned
+        results = reddit.search_botbouncer(user)
+        results_list = list(results)
+
+        if results_list:
+            logging.info(f"Found {len(results_list)} results for {user} on /r/BotBouncer")
+            time.sleep(1)
+            continue
+        
+        logging.info(f"Found {len(results_list)} results for {user} on /r/BotBouncer")
+        not_botbouncer_banned.append(user)
+
+        print("aaaaaaaaaa" * 20, flush=True)
+        time.sleep(3)
+
+    print("==" * 60)
+    print("end of run")
+    print(not_botbouncer_banned)
