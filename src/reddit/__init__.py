@@ -1,4 +1,5 @@
 from .shadowban_check import shadowban_check as _shadowban_check
+from .search_rbotbouncer import search_botbouncer
 
 from functools import wraps
 @wraps(_shadowban_check)
