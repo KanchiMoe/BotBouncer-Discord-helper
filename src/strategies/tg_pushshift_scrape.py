@@ -2,9 +2,9 @@ import logging
 import random
 import time
 
+from src import helpers
+
 from src.pushshift.query_pushshift import get_posts
-from src.helpers.extract_subreddits import extract_subreddit_post_pushshift
-from src.helpers.unique_users import get_unique_users_post_pushshift
 from src.reddit.shadowban_check import shadowban_check
 
 def entry(telegram_handle):
@@ -21,10 +21,10 @@ def entry(telegram_handle):
     logging.info(f"{ps_item_count} posts were found by Pushshift")
 
     # extract the subreddits
-    extract_subreddit_post_pushshift(ps_data)
+    helpers.extract_subreddit_post_pushshift(ps_data)
 
     # find unique users
-    unique_users = get_unique_users_post_pushshift(ps_data)
+    unique_users = helpers.get_unique_users_post_pushshift(ps_data)
 
     # STILL WIP
     # for each user in the list of unique users
@@ -39,4 +39,5 @@ def entry(telegram_handle):
             time.sleep(sleep_for)
             continue
             
-
+        print("=================================================================")
+        print(f"{user}")
