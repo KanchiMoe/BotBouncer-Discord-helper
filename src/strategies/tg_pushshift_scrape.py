@@ -2,10 +2,10 @@ import logging
 import random
 import time
 
+from src import helpers
+from src import reddit
+
 from src.pushshift.query_pushshift import get_posts
-from src.helpers.extract_subreddits import extract_subreddit_post_pushshift
-from src.helpers.unique_users import get_unique_users_post_pushshift
-from src.reddit.shadowban_check import shadowban_check
 
 def entry(telegram_handle):
     logging.info("Searching pushshift for posts containing the TG handle: %s", telegram_handle)
@@ -21,15 +21,16 @@ def entry(telegram_handle):
     logging.info(f"{ps_item_count} posts were found by Pushshift")
 
     # extract the subreddits
-    extract_subreddit_post_pushshift(ps_data)
+    helpers.extract_subreddit_post_pushshift(ps_data)
 
     # find unique users
-    unique_users = get_unique_users_post_pushshift(ps_data)
+    unique_users = helpers.get_unique_users_post_pushshift(ps_data)
 
-    # STILL WIP
+    not_botbouncer_banned = []
+
     # for each user in the list of unique users
     for user in unique_users:
-        state, _ = shadowban_check(user)
+        state, _ = reddit.shadowban_check(user)
 
         # if state is not 0 (active)
         if state != 0:
@@ -38,5 +39,22 @@ def entry(telegram_handle):
             logging.debug(f"Sleeping for {sleep_for} seconds")
             time.sleep(sleep_for)
             continue
-            
+        
+        # check to see if they have already been banned
+        results = reddit.search_botbouncer(user)
+        results_list = list(results)
 
+        if results_list:
+            logging.info(f"Found {len(results_list)} results for {user} on /r/BotBouncer")
+            time.sleep(1)
+            continue
+        
+        logging.info(f"Found {len(results_list)} results for {user} on /r/BotBouncer")
+        not_botbouncer_banned.append(user)
+
+        print("aaaaaaaaaa" * 20, flush=True)
+        time.sleep(3)
+
+    print("==" * 60)
+    print("end of run")
+    print(not_botbouncer_banned)

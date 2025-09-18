@@ -31,7 +31,7 @@ def get_posts(keyword, limit=1000):
     }
 
     params = {
-        "q": keyword,
+        "q": f'"{keyword}"',
         "size": limit,
         "after": unix_timestamp
     }
