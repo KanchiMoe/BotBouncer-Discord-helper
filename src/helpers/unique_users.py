@@ -12,5 +12,6 @@ def get_unique_users_post_pushshift(json_data):
         if user:
             users.add(user)
 
+    users.discard("[deleted]")
     logging.info("Extracted %s unique users", len(users))
     return users
