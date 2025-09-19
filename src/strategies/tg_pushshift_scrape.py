@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+import uuid
 
 from src import helpers
 from src import reddit
@@ -8,6 +9,9 @@ from src import reddit
 from src.pushshift.query_pushshift import get_posts
 
 def entry(telegram_handle):
+    run_uuid = uuid.uuid4()
+    logging.info(f"Run UUID: {run_uuid}")
+
     logging.info("Searching pushshift for posts containing the TG handle: %s", telegram_handle)
     ps_data = get_posts(telegram_handle)
 
